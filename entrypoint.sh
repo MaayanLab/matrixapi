@@ -1,1 +1,1 @@
-python matrixapi.py
+python3 matrixapi.py
