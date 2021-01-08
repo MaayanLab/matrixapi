@@ -85,7 +85,7 @@ class GetCol(tornado.web.RequestHandler):
         rowids = [x.decode("UTF-8") for x in list(f["meta"]["rowid"])]
         if data["id"] in colids:
             values = list(f["data"]["matrix"][:, colids.index(data["id"])])
-            response = { 'rowID': rowids, 'colID': data["id"], 'values': [float(x) for x in values]}
+            response = { 'index': rowids, 'columns': data["id"], 'values': [float(x) for x in values]}
         else:
             response = { 'error': data["id"]+' not in colids'}
         f.close()
@@ -98,7 +98,7 @@ class GetRow(tornado.web.RequestHandler):
         rowids = [x.decode("UTF-8") for x in list(f["meta"]["rowid"])]
         if data["id"] in rowids:
             values = list(f["data"]["matrix"][:, colids.index(data["id"])])
-            response = { 'rowid': data["id"], 'colID': colids, 'values': [float(x) for x in values]}
+            response = { 'index': data["id"], 'columns': colids, 'values': [float(x) for x in values]}
         else:
             response = { 'error': data["id"]+' not in rowids'}
         f.close()
