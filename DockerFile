@@ -15,6 +15,8 @@ RUN pip3 install tornado
 RUN pip3 install requests
 RUN pip3 install python-dateutil --upgrade
 RUN pip3 install h5py
+RUN pip3 install pandas
+RUN pip3 install numpy
 
 WORKDIR /usr/local/src
 
