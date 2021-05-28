@@ -112,6 +112,29 @@ class GetColTop(tornado.web.RequestHandler):
         f.close()
 
         self.write(response)
+
+class GetColBottom(tornado.web.RequestHandler):
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        f = h5.File("matrix.h5")
+        colids = [x.decode("UTF-8") for x in list(f["meta"]["colid"])]
+        if data["id"] in colids:
+            values = list(f["data"]["matrix"][:, colids.index(data["id"])])
+            values = [float(x) for x in values]
+            df = pd.DataFrame({'rowids':colids, 'values':values})
+            df = df.sort_values(by=["values"], ascending=True)
+            top_rid = []
+            top_value = []
+            for i in range(0, int(data["count"])):
+                top_rid.append(df.iloc[i, 0])
+                top_value.append(df.iloc[i, 1])
+            response = { 'index': list(range(0, len(top_rid))), 'column': data["id"], 'rowids': top_rid, 'values': top_value}
+        else:
+            response = { 'error': data["id"]+' not in colids'}
+        f.close()
+
+        self.write(response)
+
 class GetRow(tornado.web.RequestHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -145,6 +168,7 @@ application = tornado.web.Application([
     (r"/"+base_name+"/row", GetRow),
     (r"/"+base_name+"/col", GetCol),
     (r"/"+base_name+"/coltop", GetColTop),
+    (r"/"+base_name+"/colbottom", GetColBottom),
     (r"/"+base_name+"/slice", GetSlice)
 ])
 
